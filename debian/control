@@ -1,0 +1,42 @@
+Source: go-md2man-v2
+Maintainer: Deepin Developer <deepin-dev@deepin.org>
+Uploaders: Deepin Packages Builder <packages@deepin.org>
+           Anthony Fok <foka@debian.org>
+Section: doc
+Testsuite: autopkgtest-pkg-go
+Priority: optional
+Build-Depends: debhelper-compat (= 13),
+               dh-golang (>= 1.18~),
+               golang-any,
+               golang-github-russross-blackfriday-v2-dev (>= 2.0.1~)
+Standards-Version: 4.5.0
+#Vcs-Browser
+#Vcs-Git
+Homepage: https://github.com/cpuguy83/go-md2man
+Rules-Requires-Root: no
+XS-Go-Import-Path: github.com/cpuguy83/go-md2man/v2
+
+Package: go-md2man
+Architecture: linux-any
+Multi-Arch: foreign
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
+Conflicts: go-md2man-v2
+Built-Using: ${misc:Built-Using}
+Description: utility to create manpages from markdown
+ Turns Markdown into manpages, which is really handy for people
+ that don't want to learn how to make manpages from stuff like DocBook.
+ .
+ This package contains the conversion binary for go-md2man version 2.
+
+Package: golang-github-cpuguy83-go-md2man-v2-dev
+Architecture: all
+Section: devel
+Depends: golang-github-russross-blackfriday-v2-dev (>= 2.0.1~),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: utility to create manpages from markdown (source)
+ Turns Markdown into manpages, which is really handy for people
+ that don't want to learn how to make manpages from stuff like DocBook.
+ .
+ This package contains the source for go-md2man version 2.

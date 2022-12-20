@@ -1,0 +1,11 @@
+go-md2man-v2 (2.0.0.1-deepin) UNRELEASED; urgency=medium
+
+  * update
+
+ -- Deepin Developer <deepin-dev@deepin.org>  Wed, 10 Aug 2022 16:49:13 +0800
+
+go-md2man-v2 (2.0.0.1-deepin) stable; urgency=medium
+
+  * ['Autobuild release-candidate']
+
+ -- Deepin Packages Builder <packages@deepin.org>  Wed, 10 Aug 2022 16:27:03 +0800
