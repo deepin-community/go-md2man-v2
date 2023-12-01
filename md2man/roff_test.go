@@ -10,8 +10,19 @@ type TestParams struct {
 	extensions blackfriday.Extensions
 }
 
+func TestCodeBlocks(t *testing.T) {
+	tests := []string{
+		"```\nsome code\n```\n",
+		".nh\n\n.EX\nsome code\n\n.EE\n",
+
+		"```bash\necho foo\n```\n",
+		".nh\n\n.EX\necho foo\n\n.EE\n",
+	}
+	doTestsParam(t, tests, TestParams{blackfriday.FencedCode})
+}
+
 func TestEmphasis(t *testing.T) {
-	var tests = []string{
+	tests := []string{
 		"nothing inline\n",
 		".nh\n\n.PP\nnothing inline\n",
 
@@ -52,13 +63,13 @@ func TestEmphasis(t *testing.T) {
 		".nh\n\n.PP\nover \\fItwo\nlines\\fP test\n",
 
 		"odd _number of_ markers_ here\n",
-		".nh\n\n.PP\nodd \\fInumber of\\fP markers\\_ here\n",
+		".nh\n\n.PP\nodd \\fInumber of\\fP markers_ here\n",
 
 		"odd _number\nof_ markers_ here\n",
-		".nh\n\n.PP\nodd \\fInumber\nof\\fP markers\\_ here\n",
+		".nh\n\n.PP\nodd \\fInumber\nof\\fP markers_ here\n",
 
 		"mix of *markers_\n",
-		".nh\n\n.PP\nmix of *markers\\_\n",
+		".nh\n\n.PP\nmix of *markers_\n",
 
 		"*What is A\\* algorithm?*\n",
 		".nh\n\n.PP\n\\fIWhat is A* algorithm?\\fP\n",
@@ -67,7 +78,7 @@ func TestEmphasis(t *testing.T) {
 }
 
 func TestStrong(t *testing.T) {
-	var tests = []string{
+	tests := []string{
 		"nothing inline\n",
 		".nh\n\n.PP\nnothing inline\n",
 
@@ -108,25 +119,25 @@ func TestStrong(t *testing.T) {
 		".nh\n\n.PP\nover \\fBtwo\nlines\\fP test\n",
 
 		"odd __number of__ markers__ here\n",
-		".nh\n\n.PP\nodd \\fBnumber of\\fP markers\\_\\_ here\n",
+		".nh\n\n.PP\nodd \\fBnumber of\\fP markers__ here\n",
 
 		"odd __number\nof__ markers__ here\n",
-		".nh\n\n.PP\nodd \\fBnumber\nof\\fP markers\\_\\_ here\n",
+		".nh\n\n.PP\nodd \\fBnumber\nof\\fP markers__ here\n",
 
 		"mix of **markers__\n",
-		".nh\n\n.PP\nmix of **markers\\_\\_\n",
+		".nh\n\n.PP\nmix of **markers__\n",
 
 		"**`/usr`** : this folder is named `usr`\n",
-		".nh\n\n.PP\n\\fB\\fB\\fC/usr\\fR\\fP : this folder is named \\fB\\fCusr\\fR\n",
+		".nh\n\n.PP\n\\fB\\fB/usr\\fR\\fP : this folder is named \\fBusr\\fR\n",
 
 		"**`/usr`** :\n\n this folder is named `usr`\n",
-		".nh\n\n.PP\n\\fB\\fB\\fC/usr\\fR\\fP :\n\n.PP\nthis folder is named \\fB\\fCusr\\fR\n",
+		".nh\n\n.PP\n\\fB\\fB/usr\\fR\\fP :\n\n.PP\nthis folder is named \\fBusr\\fR\n",
 	}
 	doTestsInline(t, tests)
 }
 
 func TestEmphasisMix(t *testing.T) {
-	var tests = []string{
+	tests := []string{
 		"***triple emphasis***\n",
 		".nh\n\n.PP\n\\fB\\fItriple emphasis\\fP\\fP\n",
 
@@ -137,7 +148,7 @@ func TestEmphasisMix(t *testing.T) {
 		".nh\n\n.PP\n\\fB\\fItriple emphasis\\fP\\fP\n",
 
 		"***triple emphasis___\n",
-		".nh\n\n.PP\n***triple emphasis\\_\\_\\_\n",
+		".nh\n\n.PP\n***triple emphasis___\n",
 
 		"*__triple emphasis__*\n",
 		".nh\n\n.PP\n\\fI\\fBtriple emphasis\\fP\\fP\n",
@@ -155,53 +166,55 @@ func TestEmphasisMix(t *testing.T) {
 }
 
 func TestCodeSpan(t *testing.T) {
-	var tests = []string{
+	tests := []string{
 		"`source code`\n",
-		".nh\n\n.PP\n\\fB\\fCsource code\\fR\n",
+		".nh\n\n.PP\n\\fBsource code\\fR\n",
 
 		"` source code with spaces `\n",
-		".nh\n\n.PP\n\\fB\\fCsource code with spaces\\fR\n",
+		".nh\n\n.PP\n\\fBsource code with spaces\\fR\n",
 
 		"` source code with spaces `not here\n",
-		".nh\n\n.PP\n\\fB\\fCsource code with spaces\\fRnot here\n",
+		".nh\n\n.PP\n\\fBsource code with spaces\\fRnot here\n",
 
 		"a `single marker\n",
 		".nh\n\n.PP\na `single marker\n",
 
 		"a single multi-tick marker with ``` no text\n",
-		".nh\n\n.PP\na single multi\\-tick marker with ``` no text\n",
+		".nh\n\n.PP\na single multi-tick marker with ``` no text\n",
 
 		"markers with ` ` a space\n",
 		".nh\n\n.PP\nmarkers with  a space\n",
 
 		"`source code` and a `stray\n",
-		".nh\n\n.PP\n\\fB\\fCsource code\\fR and a `stray\n",
+		".nh\n\n.PP\n\\fBsource code\\fR and a `stray\n",
 
 		"`source *with* _awkward characters_ in it`\n",
-		".nh\n\n.PP\n\\fB\\fCsource *with* \\_awkward characters\\_ in it\\fR\n",
+		".nh\n\n.PP\n\\fBsource *with* _awkward characters_ in it\\fR\n",
 
 		"`split over\ntwo lines`\n",
-		".nh\n\n.PP\n\\fB\\fCsplit over\ntwo lines\\fR\n",
+		".nh\n\n.PP\n\\fBsplit over\ntwo lines\\fR\n",
 
 		"```multiple ticks``` for the marker\n",
-		".nh\n\n.PP\n\\fB\\fCmultiple ticks\\fR for the marker\n",
+		".nh\n\n.PP\n\\fBmultiple ticks\\fR for the marker\n",
 
 		"```multiple ticks `with` ticks inside```\n",
-		".nh\n\n.PP\n\\fB\\fCmultiple ticks `with` ticks inside\\fR\n",
+		".nh\n\n.PP\n\\fBmultiple ticks `with` ticks inside\\fR\n",
 	}
 	doTestsInline(t, tests)
 }
 
 func TestListLists(t *testing.T) {
-	var tests = []string{
+	tests := []string{
 		"\n\n**[grpc]**\n: Section for gRPC socket listener settings. Contains three properties:\n - **address** (Default: \"/run/containerd/containerd.sock\")\n - **uid** (Default: 0)\n - **gid** (Default: 0)",
 		".nh\n\n.TP\n\\fB[grpc]\\fP\nSection for gRPC socket listener settings. Contains three properties:\n.RS\n.IP \\(bu 2\n\\fBaddress\\fP (Default: \"/run/containerd/containerd.sock\")\n.IP \\(bu 2\n\\fBuid\\fP (Default: 0)\n.IP \\(bu 2\n\\fBgid\\fP (Default: 0)\n\n.RE\n\n",
+		"Definition title\n: Definition description one\n: And two\n: And three\n",
+		".nh\n\n.TP\nDefinition title\nDefinition description one\n\nAnd two\n\nAnd three\n",
 	}
 	doTestsParam(t, tests, TestParams{blackfriday.DefinitionLists})
 }
 
 func TestLineBreak(t *testing.T) {
-	var tests = []string{
+	tests := []string{
 		"this line  \nhas a break\n",
 		".nh\n\n.PP\nthis line\n.br\nhas a break\n",
 
@@ -236,11 +249,12 @@ func TestLineBreak(t *testing.T) {
 		".nh\n\n.PP\nthis has an\n.br\nextra space\n",
 	}
 	doTestsInlineParam(t, tests, TestParams{
-		extensions: blackfriday.BackslashLineBreak})
+		extensions: blackfriday.BackslashLineBreak,
+	})
 }
 
 func TestTable(t *testing.T) {
-	var tests = []string{
+	tests := []string{
 		`
 | Animal               | Color         |
 | --------------| --- |
@@ -255,7 +269,7 @@ func TestTable(t *testing.T) {
 allbox;
 l l 
 l l .
-\fB\fCAnimal\fR	\fB\fCColor\fR
+\fBAnimal\fP	\fBColor\fP
 elephant	T{
 Gray. The elephant is very gray.
 T}
@@ -270,12 +284,132 @@ robin	red.
 	doTestsInlineParam(t, tests, TestParams{blackfriday.Tables})
 }
 
+func TestTableWithEmptyCell(t *testing.T) {
+	tests := []string{
+		`
+| Col1     | Col2  | Col3 |
+|:---------|:-----:|:----:| 
+| row one  |       |      | 
+| row two  | x     |      |
+`,
+		`.nh
+
+.TS
+allbox;
+l l l 
+l l l .
+\fBCol1\fP	\fBCol2\fP	\fBCol3\fP
+row one		
+row two	x	
+.TE
+`,
+	}
+	doTestsInlineParam(t, tests, TestParams{blackfriday.Tables})
+}
+
+func TestTableWrapping(t *testing.T) {
+	tests := []string{
+		`
+| Col1        | Col2                                             |
+| ----------- | ------------------------------------------------ |
+| row one     | This is a short line.                            |
+| row\|two    | Col1 should not wrap.                            |
+| row three   | no\|wrap                                         |
+| row four    | Inline _cursive_ should not wrap.                |
+| row five    | Inline ` + "`code markup`" + ` should not wrap.  |
+| row six     | A line that's longer than 30 characters with inline ` + "`code markup`" + ` or _cursive_ should not wrap.  |
+| row seven   | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eu ipsum eget tortor aliquam accumsan. Quisque ac turpis convallis, sagittis urna ac, tempor est. Mauris nibh arcu, hendrerit id eros sed, sodales lacinia ex. Suspendisse sed condimentum urna, vitae mattis lectus. Mauris imperdiet magna vel purus pretium, id interdum libero. |
+`,
+		`.nh
+
+.TS
+allbox;
+l l 
+l l .
+\fBCol1\fP	\fBCol2\fP
+row one	This is a short line.
+row|two	Col1 should not wrap.
+row three	no|wrap
+row four	Inline \fIcursive\fP should not wrap.
+row five	Inline \fBcode markup\fR should not wrap.
+row six	T{
+A line that's longer than 30 characters with inline \fBcode markup\fR or \fIcursive\fP should not wrap.
+T}
+row seven	T{
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eu ipsum eget tortor aliquam accumsan. Quisque ac turpis convallis, sagittis urna ac, tempor est. Mauris nibh arcu, hendrerit id eros sed, sodales lacinia ex. Suspendisse sed condimentum urna, vitae mattis lectus. Mauris imperdiet magna vel purus pretium, id interdum libero.
+T}
+.TE
+`,
+	}
+	doTestsInlineParam(t, tests, TestParams{blackfriday.Tables})
+}
+
 func TestLinks(t *testing.T) {
-	var tests = []string{
+	tests := []string{
 		"See [docs](https://docs.docker.com/) for\nmore",
 		".nh\n\n.PP\nSee docs\n\\[la]https://docs.docker.com/\\[ra] for\nmore\n",
+		"See [docs](https://docs-foo.docker.com/) for\nmore",
+		".nh\n\n.PP\nSee docs\n\\[la]https://docs\\-foo.docker.com/\\[ra] for\nmore\n",
+		"See <https://docs-foo.docker.com/> for\nmore",
+		".nh\n\n.PP\nSee \n\\[la]https://docs\\-foo.docker.com/\\[ra] for\nmore\n",
 	}
 	doTestsInline(t, tests)
+}
+
+func TestEscapeCharacters(t *testing.T) {
+	tests := []string{
+		"Test-one_two&three\\four~five",
+		".nh\n\n.PP\nTest-one_two&three\\\\four~five\n",
+	}
+	doTestsInline(t, tests)
+}
+
+func TestSpan(t *testing.T) {
+	tests := []string{
+		"Text containing a <span>html span</span> element\n",
+		".nh\n\n.PP\nText containing a html span element\n",
+
+		`Text containing an inline <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"><image href="https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png" height="200" width="200"/></svg>SVG image`,
+		".nh\n\n.PP\nText containing an inline SVG image\n",
+
+		"Text containing a <span id=\"e-123\" class=\"foo\">html span</span> element\n",
+		".nh\n\n.PP\nText containing a html span element\n",
+	}
+	doTestsInline(t, tests)
+}
+
+func TestEmails(t *testing.T) {
+	tests := []string{
+		`April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit <SvenDowideit@home.org.au>
+July 2014, updated by Sven Dowideit (SvenDowideit@home.org.au)
+`,
+		`.nh
+
+.PP
+April 2014, Originally compiled by William Henry (whenry at redhat dot com)
+based on docker.com source material and internal work.
+June 2014, updated by Sven Dowideit SvenDowideit@home.org.au
+\[la]mailto:SvenDowideit@home.org.au\[ra]
+July 2014, updated by Sven Dowideit (SvenDowideit@home.org.au)
+`,
+	}
+	doTestsInline(t, tests)
+}
+
+func TestComments(t *testing.T) {
+	blockTests := []string{
+		"First paragraph\n\n<!-- Comment, HTML should be separated by blank lines -->\n\nSecond paragraph\n",
+		".nh\n\n.PP\nFirst paragraph\n\n.PP\nSecond paragraph\n",
+	}
+	doTestsParam(t, blockTests, TestParams{})
+
+	inlineTests := []string{
+		"Text with a com<!--...-->ment in the middle\n",
+		".nh\n\n.PP\nText with a comment in the middle\n",
+	}
+	doTestsInlineParam(t, inlineTests, TestParams{})
 }
 
 func execRecoverableTestSuite(t *testing.T, tests []string, params TestParams, suite func(candidate *string)) {

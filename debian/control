@@ -1,28 +1,29 @@
 Source: go-md2man-v2
-Maintainer: Deepin Developer <deepin-dev@deepin.org>
-Uploaders: Deepin Packages Builder <packages@deepin.org>
-           Anthony Fok <foka@debian.org>
-Section: doc
-Testsuite: autopkgtest-pkg-go
+Section: golang
 Priority: optional
-Build-Depends: debhelper-compat (= 13),
-               dh-golang (>= 1.18~),
-               golang-any,
-               golang-github-russross-blackfriday-v2-dev (>= 2.0.1~)
-Standards-Version: 4.5.0
-#Vcs-Browser
-#Vcs-Git
-Homepage: https://github.com/cpuguy83/go-md2man
+Maintainer: Debian Go Packaging Team <team+pkg-go@tracker.debian.org>
+Uploaders: Tianon Gravi <tianon@debian.org>,
+           Anthony Fok <foka@debian.org>
 Rules-Requires-Root: no
+Build-Depends: debhelper-compat (= 13),
+               dh-sequence-golang,
+               golang-any,
+               golang-github-russross-blackfriday-v2-dev (>= 2.1.0)
+Testsuite: autopkgtest-pkg-go
+Standards-Version: 4.6.2
+Vcs-Browser: https://salsa.debian.org/go-team/packages/go-md2man-v2
+Vcs-Git: https://salsa.debian.org/go-team/packages/go-md2man-v2.git
+Homepage: https://github.com/cpuguy83/go-md2man
 XS-Go-Import-Path: github.com/cpuguy83/go-md2man/v2
 
 Package: go-md2man
-Architecture: linux-any
+Section: doc
+Architecture: any
 Multi-Arch: foreign
 Depends: ${misc:Depends},
          ${shlibs:Depends}
 Conflicts: go-md2man-v2
-Built-Using: ${misc:Built-Using}
+Static-Built-Using: ${misc:Static-Built-Using}
 Description: utility to create manpages from markdown
  Turns Markdown into manpages, which is really handy for people
  that don't want to learn how to make manpages from stuff like DocBook.
@@ -31,10 +32,9 @@ Description: utility to create manpages from markdown
 
 Package: golang-github-cpuguy83-go-md2man-v2-dev
 Architecture: all
-Section: devel
-Depends: golang-github-russross-blackfriday-v2-dev (>= 2.0.1~),
-         ${misc:Depends},
-         ${shlibs:Depends}
+Multi-Arch: foreign
+Depends: golang-github-russross-blackfriday-v2-dev (>= 2.1.0),
+         ${misc:Depends}
 Description: utility to create manpages from markdown (source)
  Turns Markdown into manpages, which is really handy for people
  that don't want to learn how to make manpages from stuff like DocBook.
