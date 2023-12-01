@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@ --builddirectory=_build --buildsystem=golang --with=golang
+	dh $@ --builddirectory=_build --buildsystem=golang
 
 execute_after_dh_auto_build:
 	mv _build/bin/v2 _build/bin/go-md2man

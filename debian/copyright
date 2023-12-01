@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: cpuguy83/go-md2man
 Source: https://github.com/cpuguy83/go-md2man
+Upstream-Name: go-md2man
 Files-Excluded: vendor
 
 Files: *
