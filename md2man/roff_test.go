@@ -13,10 +13,14 @@ type TestParams struct {
 func TestCodeBlocks(t *testing.T) {
 	tests := []string{
 		"```\nsome code\n```\n",
-		".nh\n\n.EX\nsome code\n\n.EE\n",
+		".nh\n\n.EX\nsome code\n.EE\n",
 
 		"```bash\necho foo\n```\n",
-		".nh\n\n.EX\necho foo\n\n.EE\n",
+		".nh\n\n.EX\necho foo\n.EE\n",
+
+		// make sure literal new lines surrounding the markdown block are preserved as they are intentional
+		"```bash\n\nsome code\n\n```",
+		".nh\n\n.EX\n\nsome code\n\n.EE\n",
 	}
 	doTestsParam(t, tests, TestParams{blackfriday.FencedCode})
 }
@@ -263,7 +267,8 @@ func TestTable(t *testing.T) {
 | zebra        | Sometimes black and sometimes white, depending on the stripe.     |
 | robin | red. |
 `,
-		`.nh
+		`'\" t
+.nh
 
 .TS
 allbox;
@@ -292,7 +297,8 @@ func TestTableWithEmptyCell(t *testing.T) {
 | row one  |       |      | 
 | row two  | x     |      |
 `,
-		`.nh
+		`'\" t
+.nh
 
 .TS
 allbox;
@@ -320,7 +326,8 @@ func TestTableWrapping(t *testing.T) {
 | row six     | A line that's longer than 30 characters with inline ` + "`code markup`" + ` or _cursive_ should not wrap.  |
 | row seven   | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eu ipsum eget tortor aliquam accumsan. Quisque ac turpis convallis, sagittis urna ac, tempor est. Mauris nibh arcu, hendrerit id eros sed, sodales lacinia ex. Suspendisse sed condimentum urna, vitae mattis lectus. Mauris imperdiet magna vel purus pretium, id interdum libero. |
 `,
-		`.nh
+		`'\" t
+.nh
 
 .TS
 allbox;
@@ -360,6 +367,8 @@ func TestEscapeCharacters(t *testing.T) {
 	tests := []string{
 		"Test-one_two&three\\four~five",
 		".nh\n\n.PP\nTest-one_two&three\\\\four~five\n",
+		"'foo'\n'bar'",
+		".nh\n\n.PP\n\\&'foo'\n\\&'bar'\n",
 	}
 	doTestsInline(t, tests)
 }
@@ -438,23 +447,25 @@ func doTestsParam(t *testing.T, tests []string, params TestParams) {
 	execRecoverableTestSuite(t, tests, params, func(candidate *string) {
 		for i := 0; i+1 < len(tests); i += 2 {
 			input := tests[i]
-			*candidate = input
-			expected := tests[i+1]
-			actual := runMarkdown(*candidate, params)
-			if actual != expected {
-				t.Errorf("\nInput   [%#v]\nExpected[%#v]\nActual  [%#v]",
-					*candidate, expected, actual)
-			}
+			t.Run(input, func(t *testing.T) {
+				*candidate = input
+				expected := tests[i+1]
+				actual := runMarkdown(*candidate, params)
+				if actual != expected {
+					t.Errorf("\nInput   [%#v]\nExpected[%#v]\nActual  [%#v]",
+						*candidate, expected, actual)
+				}
 
-			// now test every substring to stress test bounds checking
-			if !testing.Short() {
-				for start := 0; start < len(input); start++ {
-					for end := start + 1; end <= len(input); end++ {
-						*candidate = input[start:end]
-						runMarkdown(*candidate, params)
+				// now test every substring to stress test bounds checking
+				if !testing.Short() {
+					for start := 0; start < len(input); start++ {
+						for end := start + 1; end <= len(input); end++ {
+							*candidate = input[start:end]
+							runMarkdown(*candidate, params)
+						}
 					}
 				}
-			}
+			})
 		}
 	})
 }
