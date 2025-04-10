@@ -207,12 +207,22 @@ func TestCodeSpan(t *testing.T) {
 	doTestsInline(t, tests)
 }
 
+func TestFlatLists(t *testing.T) {
+	tests := []string{
+		"Paragraph\n\n- item one\n- item two\n- item three\n",
+		".nh\n\n.PP\nParagraph\n.IP \\(bu 2\nitem one\n.IP \\(bu 2\nitem two\n.IP \\(bu 2\nitem three\n",
+	}
+	doTestsInline(t, tests)
+}
+
 func TestListLists(t *testing.T) {
 	tests := []string{
 		"\n\n**[grpc]**\n: Section for gRPC socket listener settings. Contains three properties:\n - **address** (Default: \"/run/containerd/containerd.sock\")\n - **uid** (Default: 0)\n - **gid** (Default: 0)",
-		".nh\n\n.TP\n\\fB[grpc]\\fP\nSection for gRPC socket listener settings. Contains three properties:\n.RS\n.IP \\(bu 2\n\\fBaddress\\fP (Default: \"/run/containerd/containerd.sock\")\n.IP \\(bu 2\n\\fBuid\\fP (Default: 0)\n.IP \\(bu 2\n\\fBgid\\fP (Default: 0)\n\n.RE\n\n",
+		".nh\n\n.TP\n\\fB[grpc]\\fP\nSection for gRPC socket listener settings. Contains three properties:\n.RS\n.IP \\(bu 2\n\\fBaddress\\fP (Default: \"/run/containerd/containerd.sock\")\n.IP \\(bu 2\n\\fBuid\\fP (Default: 0)\n.IP \\(bu 2\n\\fBgid\\fP (Default: 0)\n.RE\n",
 		"Definition title\n: Definition description one\n: And two\n: And three\n",
 		".nh\n\n.TP\nDefinition title\nDefinition description one\n\nAnd two\n\nAnd three\n",
+		"Definition\n:    description\n\n     split\n\n     over\n\n     multiple\n\n     paragraphs\n",
+		".nh\n\n.TP\nDefinition\ndescription\n\nsplit\n\nover\n\nmultiple\n\nparagraphs\n",
 	}
 	doTestsParam(t, tests, TestParams{blackfriday.DefinitionLists})
 }
@@ -419,6 +429,20 @@ func TestComments(t *testing.T) {
 		".nh\n\n.PP\nText with a comment in the middle\n",
 	}
 	doTestsInlineParam(t, inlineTests, TestParams{})
+}
+
+func TestHeadings(t *testing.T) {
+	tests := []string{
+		"# title\n\n# NAME\ncommand - description\n\n# SYNOPSIS\nA short description\n\nWhich spans multiple paragraphs\n",
+		".nh\n.TH title\n\n.SH NAME\ncommand \\- description\n\n\n.SH SYNOPSIS\nA short description\n\n.PP\nWhich spans multiple paragraphs\n",
+
+		"# title\n\n# Name\nmy-command, other - description - with - hyphens\n",
+		".nh\n.TH title\n\n.SH Name\nmy-command, other \\- description - with - hyphens\n",
+
+		"# title\n\n# Not NAME\nsome - other - text\n",
+		".nh\n.TH title\n\n.SH Not NAME\nsome - other - text\n",
+	}
+	doTestsInline(t, tests)
 }
 
 func execRecoverableTestSuite(t *testing.T, tests []string, params TestParams, suite func(candidate *string)) {
